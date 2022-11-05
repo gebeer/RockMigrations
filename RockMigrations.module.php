@@ -1487,7 +1487,29 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
       }
       unset($data['fieldgroupFields']);
       unset($data['fieldgroupContexts']);
+    } elseif ($item instanceof Module) {
+      /** @var Module $item */
+      $data = $this->wire->modules->getConfig($item);
+      bd($data);
+      // unset($data['id']);
+      // unset($data['name']);
+      // unset($data['rockmigrations']);
+
+      // // use custom fields syntax
+      // try {
+      //   $fields = [];
+      //   foreach ($data['fieldgroupFields'] as $k => $field) {
+      //     $context = $data['fieldgroupContexts'][$field];
+      //     $fields[$field] = $context;
+      //   }
+      //   $data = ['fields' => $fields] + $data;
+      // } catch (\Throwable $th) {
+      //   $this->log($th->getMessage());
+      // }
+      // unset($data['fieldgroupFields']);
+      // unset($data['fieldgroupContexts']);
     }
+
     if (array_key_exists('_rockmigrations_log', $data)) {
       unset($data['_rockmigrations_log']);
     }
@@ -1694,7 +1716,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   public function getTraceLog()
   {
     $trace = date("--- Y-m-d H:i:s ---") . "\n";
-    // bd(debug_backtrace());
+    bd(debug_backtrace());
     foreach (debug_backtrace() as $line) {
       if (!array_key_exists('file', $line)) continue;
       if (strpos($line['file'], $this->wire->config->paths->wire) !== false) continue;
@@ -2821,8 +2843,12 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
       if (!is_array($data)) $data = [];
       $data = array_merge($old, $data);
     }
+    // save trace of migration to module
+    // this is shown on module edit screen
+    $module->_rockmigrations_log = $this->getTraceLog();
 
     $this->modules->saveConfig($module, $data);
+
     return $module;
   }
 
@@ -3162,7 +3188,8 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   public function showCopyCode(HookEvent $event)
   {
     $form = $event->object;
-    if (!$id = $this->wire->input->get('id', 'int')) return;
+    if ((!$id = $this->wire->input->get('id', 'int')) && (!$name = $this->wire->input->get('name', 'text'))) return;
+    if(isset($name) && !$module = $this->wire->modules->get($name)) return;
 
     if ($event->process == 'ProcessField') {
       $existing = $form->get('field_label');
@@ -3170,17 +3197,21 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
     } elseif ($event->process == 'ProcessTemplate') {
       $existing = $form->get('fieldgroup_fields');
       $item = $this->wire->templates->get($id);
+    } elseif ($event->process == 'ProcessModule') {
+      // bd($form);
+      $existing = $form->get('uninstall');
+      $item = $module;
     } else return;
 
     // early exit (eg when changing fieldtype)
     if (!$existing) return;
-
+    $raw = $event->process == 'ProcessModule' ? true : false;
     $form->add([
       'name' => '_RockMigrationsCopyInfo',
       'type' => 'markup',
       'label' => 'RockMigrations Code',
       'description' => 'This is the code you can use for your migrations:',
-      'value' => "<pre><code>" . $this->getCode($item) . "</code></pre>",
+      'value' => "<pre><code>" . $this->getCode($item, $raw) . "</code></pre>",
       'collapsed' => Inputfield::collapsedYes,
     ]);
     $f = $form->get('_RockMigrationsCopyInfo');
@@ -3195,19 +3226,24 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   public function showEditInfo(HookEvent $event)
   {
     $form = $event->object;
-    if (!$id = $this->wire->input->get('id', 'int')) return;
-
+    if ((!$id = $this->wire->input->get('id', 'int')) && (!$name = $this->wire->input->get('name', 'text'))) return;
+    if(isset($name) && !$module = $this->wire->modules->get($name)) return;
     if ($event->process == 'ProcessField') {
       $existing = $form->get('field_label');
       $item = $this->wire->fields->get($id);
     } elseif ($event->process == 'ProcessTemplate') {
       $existing = $form->get('fieldgroup_fields');
       $item = $this->wire->templates->get($id);
+    } elseif ($event->process == 'ProcessModule') {
+      // bd($form);
+      $existing = $form->get('uninstall');
+      $item = $module;
     } else return;
 
     // early exit (eg when changing fieldtype)
     if (!$existing) return;
 
+    $backtrace =  nl2br($item->get('_rockmigrations_log') ?: '');
     $form->add([
       'name' => '_RockMigrations',
       'type' => 'markup',
@@ -3216,8 +3252,8 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
         ATTENTION - This item might be under control of RockMigrations
         </div>
         <div>If you make any changes they might be overwritten
-        by the next migration! Here is the backtrace of the last migration:</div>',
-      'value' => "<small>" . nl2br($item->get('_rockmigrations_log') ?: '') . "</small>",
+        by the next migration! ' . ($backtrace ? 'Here is the backtrace of the last migration:' : '') . '</div>',
+      'value' => "<small>" . $backtrace . "</small>",
     ]);
     $f = $form->get('_RockMigrations');
     $f->entityEncodeText = false;
