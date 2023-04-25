@@ -11,7 +11,7 @@ $info = [
   'icon' => 'magic',
   // requires php8.0 because of symfony yaml (also set in composer.json)
   'requires' => [
-    'PHP>=8.0',
+    'PHP>=7.4',
   ],
   'installs' => [
     'MagicPages',

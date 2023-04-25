@@ -2577,12 +2577,12 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
       /** @var WireData $d */
       $d->setArray($data);
       $this->createPage(
-        title: $d->title ?: $name,
-        name: $name,
-        template: $d->template,
-        parent: $d->parent,
-        status: $d->status,
-        data: $d->data
+        $d->template,
+        $d->parent,
+        $name,
+        $d->title ?: $name,
+        $d->status,
+        $d->data
       );
     }
   }
