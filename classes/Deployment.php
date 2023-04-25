@@ -371,7 +371,7 @@ class Deployment extends WireData
     return $this->robots(!!$bool);
   }
 
-  public function rootFolderName(): string
+  public function rootFolderName()
   {
     return basename($this->paths->root);
   }

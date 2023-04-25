@@ -307,7 +307,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * TRUE = httpHost ends with .ddev.site
    * FALSE = httpHost does not end with .ddev.site
    */
-  public function isDDEV(): bool
+  public function isDDEV()
   {
     return substr($this->wire->config->httpHost, -10) === ".ddev.site";
   }
@@ -343,7 +343,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * The method is intended to easily develop module styles in LESS and ship
    * the CSS version.
    */
-  public function saveCSS($less, $onlySuperuser = true, $css = null): string
+  public function saveCSS($less, $onlySuperuser = true, $css = null)
   {
     $css = $css ?: "$less.css";
     if (!is_file($less)) return $css;
@@ -981,7 +981,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    *   'field2' => [...],
    * ]);
    */
-  public function createFields($fields): void
+  public function createFields($fields)
   {
     foreach ($fields as $name => $data) {
       if (is_int($name)) {
@@ -1610,7 +1610,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Get first second of year/month/day
    */
-  public function firstSecond($year, $month = null, $day = null): int
+  public function firstSecond($year, $month = null, $day = null)
   {
     $date = new DateTime();
     $date->setDate($year, $month ?: 1, $day ?: 1);
@@ -1791,7 +1791,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Get a new deployment instance (for debugging/testing)
    */
-  public function getDeployment($argv = null, $whitelistedPath = null): Deployment
+  public function getDeployment($argv = null, $whitelistedPath = null)
   {
     return new Deployment($argv, $whitelistedPath);
   }
@@ -2210,7 +2210,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Are we in CLI environment?
    */
-  public function isCLI(): bool
+  public function isCLI()
   {
     return php_sapi_name() == "cli" or defined('RockMigrationsCLI');
   }
@@ -2228,7 +2228,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * This does also support IDN emails
    * See https://github.com/processwire/processwire-issues/issues/1647
    */
-  public function isEmail($mail): bool
+  public function isEmail($mail)
   {
     $atom = "[-a-z0-9!#$%&'*+/=?^_`{|}~]"; // RFC 5322 unquoted characters in local-part
     $alpha = "a-z\x80-\xFF"; // superset of IDN
@@ -2247,7 +2247,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * Returns true if comparison file does not exist
    * Returns false if file does not exist
    */
-  public function isNewer($file, $comparison): bool
+  public function isNewer($file, $comparison)
   {
     return $this->filemtime($file) > $this->filemtime($comparison);
   }
@@ -2304,7 +2304,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Get last second of year/month/day
    */
-  public function lastSecond($year, $month = null, $day = null): int
+  public function lastSecond($year, $month = null, $day = null)
   {
     $date = new DateTime();
     $date->setDate($year, $month ?: 1, $day ?: 1);
@@ -2436,7 +2436,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Get instance of MagicPages module
    */
-  public function magic(): MagicPages
+  public function magic()
   {
     return $this->wire->modules->get('MagicPages');
   }
@@ -2471,7 +2471,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * field. Prior to v1.0.9 manually created fields had always been added to the
    * top of the page editor if not explicitly listed in the migrate() call.
    */
-  protected function mergeFields(Fieldgroup $old, Fieldgroup $new): Fieldgroup
+  protected function mergeFields(Fieldgroup $old, Fieldgroup $new)
   {
     // set the correct sort order of fields
     $merged = clone $new;
@@ -2616,7 +2616,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * Note that every pageclass needs to have the template name defined in
    * the "tpl" constant, eg YourPageClass::tpl = 'your-template-name'
    */
-  public function migratePageClasses($path, $namespace = 'ProcessWire', $tags = ''): void
+  public function migratePageClasses($path, $namespace = 'ProcessWire', $tags = '')
   {
     $options = [
       'extensions' => ['php'],
@@ -3922,7 +3922,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Convert a comma separated string into an array of single values
    */
-  public function strToArray($data): array
+  public function strToArray($data)
   {
     if (is_array($data)) return $data;
     if (!is_string($data)) throw new WireException("Invalid data in strToArray");
@@ -3985,7 +3985,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * It will always prepend the PW root directory so this method does not work
    * for absolute paths outside of PW!
    */
-  public function toPath($url): string
+  public function toPath($url)
   {
     $url = $this->toUrl($url);
     return $this->wire->config->paths->root . ltrim($url, "/");
@@ -3998,7 +3998,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * If provided a path outside of PW root it will return that path because
    * the str_replace only works if the path starts with the pw root path!
    */
-  public function toUrl($path, $cachebuster = false): string
+  public function toUrl($path, $cachebuster = false)
   {
     $cache = '';
     if ($cachebuster) {
@@ -4015,7 +4015,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Return file reference of debug backtrace
    */
-  public function traceFile($find): string
+  public function traceFile($find)
   {
     $trace = Debug::backtrace();
     foreach ($trace as $item) {
@@ -4508,7 +4508,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
     $this->wire->files->unlink($file);
   }
 
-  public function ___install(): void
+  public function ___install()
   {
     $file = $this->wire->config->paths->site . "migrate.php";
     if (!is_file($file)) {

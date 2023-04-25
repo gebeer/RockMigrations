@@ -19,7 +19,7 @@ trait MagicPage
    * Method that returns the pages template name
    * This is to be consistant with RockPageBuilder+RockMigrations snippets
    */
-  public function getTplName(): string
+  public function getTplName()
   {
     return (string)$this->template;
   }
@@ -39,7 +39,7 @@ trait MagicPage
   /**
    * Get instance of RockFrontend
    */
-  public function rockfrontend(): RockFrontend
+  public function rockfrontend()
   {
     return $this->wire->modules->get('RockFrontend');
   }
@@ -47,7 +47,7 @@ trait MagicPage
   /**
    * Get instance of RockMigrations
    */
-  public function rockmigrations(): RockMigrations
+  public function rockmigrations()
   {
     return $this->wire->modules->get('RockMigrations');
   }
@@ -65,7 +65,7 @@ trait MagicPage
     return $this->rockmigrations()->setPageNameFromTitle($this->template);
   }
 
-  public function site(): Site
+  public function site()
   {
     return $this->wire->modules->get('Site');
   }

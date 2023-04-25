@@ -237,7 +237,7 @@ class MagicPages extends WireData implements Module
    *
    * FooPage.php would load FooPage.css/.js on page edit screen
    */
-  public function addPageAssets(HookEvent $event): void
+  public function addPageAssets(HookEvent $event)
   {
     $page = $event->process->getPage();
     $path = $this->getFilePath($page);
@@ -282,7 +282,7 @@ class MagicPages extends WireData implements Module
   /**
    * Get filepath of file for given page
    */
-  public function getFilePath($page): string
+  public function getFilePath($page)
   {
     // try to get filepath from cache
     $tpl = (string)$page->template;
@@ -296,7 +296,7 @@ class MagicPages extends WireData implements Module
     return $filePath;
   }
 
-  public function rockmigrations(): RockMigrations
+  public function rockmigrations()
   {
     return $this->wire->modules->get('RockMigrations');
   }
