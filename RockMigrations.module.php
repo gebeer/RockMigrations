@@ -397,7 +397,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * $rm->minify("/path/to/style.css"); // creates /path/to/style.min.css
    * $rm->minify("/path/to/style.css", "/newpath/style.min.css");
    */
-  public function minify($file, $minFile = null): string
+  public function minify($file, $minFile = null)
   {
     $ext = pathinfo($file, PATHINFO_EXTENSION);
     require_once __DIR__ . "/vendor/autoload.php";
@@ -1952,7 +1952,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * Returns the first file found, eg
    * /path/to/pw/folder1/foo.latte
    */
-  public function getFile(string $file, array $folders): string|false
+  public function getFile(string $file, array $folders)|false
   {
     $root = $this->wire->config->paths->root;
     foreach ($folders as $dir) {
@@ -2156,7 +2156,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * about that so it's better to use this helper method instead to make sure
    * our code will always work.
    */
-  public function homeTemplate(): Template
+  public function homeTemplate()
   {
     return $this->wire->pages->get(1)->template;
   }
@@ -2764,7 +2764,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Migrate a module and all its page classes
    */
-  private function migrateModule(Module $module): void
+  private function migrateModule(Module $module)
   {
     $this->log("----- Migrate Module $module -----");
     if ($module->pageClassPath) {
@@ -2803,7 +2803,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Migrate a single pageclass of a module
    */
-  private function migratePageClass(string $file, Module $module): void
+  private function migratePageClass(string $file, Module $module)
   {
     $name = substr(basename($file), 0, -4);
     $namespace = $module->className();
@@ -2880,7 +2880,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Migrate a single watchfile
    */
-  private function migrateWatchfile(WatchFile $file): void
+  private function migrateWatchfile(WatchFile $file)
   {
     if ($this->wire->config->debug and $this->isCLI()) {
       $this->log("Watchfile: " . $file->path);
@@ -3075,7 +3075,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Get all pageclass files of given module
    */
-  private function pageClassFiles(Module $module): array
+  private function pageClassFiles(Module $module)
   {
     if (!$module->pageClassPath) return [];
     return glob($module->pageClassPath . "*.php");
@@ -3094,7 +3094,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * /site/modules/MyModule/classes/Foo.php --> namespace MyModule
    * /site/modules/MyModule/classes/Bar.php --> namespace MyModule
    */
-  public function pageClassLoader(Module $module, $folder = "classes"): void
+  public function pageClassLoader(Module $module, $folder = "classes")
   {
     $file = $this->wire->modules->getModuleFile($module);
     $path = $this->path(dirname($file) . "/" . $folder, true);
@@ -3114,7 +3114,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Helper method to add badges to the page list
    */
-  public function pageListBadge($str, $options = []): string
+  public function pageListBadge($str, $options = [])
   {
     $str = (string)$str;
     if (!$str) return '';
@@ -4471,7 +4471,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * This is very important to ensure that migrations always run in the
    * same order.
    */
-  private function sortWatchlist(): array
+  private function sortWatchlist()
   {
     $list = [];
     foreach ($this->watchlist as $file) {
@@ -4491,7 +4491,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Convert data to string (for logging)
    */
-  public function str($data): string
+  public function str($data)
   {
     if (is_array($data)) return print_r($data, true);
     elseif (is_string($data)) return "$data\n";
@@ -4628,7 +4628,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * );
    * --> /var/www/html/foo/bar/baz.php
    */
-  public function path(string $path, $slash = null): string
+  public function path(string $path, $slash = null)
   {
     $path = Paths::normalizeSeparators($path);
     if ($slash === true) $path .= "/";
@@ -4640,7 +4640,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Trigger migrate() method if it exists
    */
-  private function triggerMigrate($object, $silent = false): void
+  private function triggerMigrate($object, $silent = false)
   {
     if (!$silent) $this->log("Migrate $object");
     if (method_exists($object, "migrate")) $object->migrate();
@@ -4732,7 +4732,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   /**
    * Add lines of warning to log
    */
-  public function warn(string $str): void
+  public function warn(string $str)
   {
     $lines = explode("\n", $str);
     $len = 0;
