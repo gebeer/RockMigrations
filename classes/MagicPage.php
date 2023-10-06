@@ -5,6 +5,7 @@ namespace RockMigrations;
 use ProcessWire\RockFrontend;
 use ProcessWire\RockMigrations;
 use ProcessWire\Site;
+use ReflectionClass;
 
 trait MagicPage
 {
@@ -21,7 +22,29 @@ trait MagicPage
    */
   public function getTplName()
   {
-    return (string)$this->template;
+    $reflection = new ReflectionClass($this);
+    if ($reflection->hasConstant('tpl')) {
+      return (string) $reflection->getConstant('tpl');
+    }
+    $tpl = (string)$this->template;
+    if ($tpl) return $tpl;
+  }
+
+  /**
+   * Renders a badge in the page list
+   * Often needed for adding dates to page titles etc.
+   * https://i.imgur.com/nB2IYNS.png
+   */
+  public function pageListBadge($str, $style = '')
+  {
+    $str = trim($str);
+    if (!$str) return;
+    return "<span style='
+      padding:2px 10px;
+      border-radius:5px;
+      background:#efefef;
+      font-size:0.8em;
+      $style'>$str</span>";
   }
 
   /**
