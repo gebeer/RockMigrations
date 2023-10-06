@@ -1952,7 +1952,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
    * Returns the first file found, eg
    * /path/to/pw/folder1/foo.latte
    */
-  public function getFile(string $file, array $folders)|false
+  public function getFile(string $file, array $folders)
   {
     $root = $this->wire->config->paths->root;
     foreach ($folders as $dir) {
