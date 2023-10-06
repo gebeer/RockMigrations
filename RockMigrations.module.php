@@ -362,7 +362,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
     $less,
     $onlySuperuser = true,
     $css = null,
-    $minify = false,
+    $minify = false
   ) {
     $css = $css ?: substr($less, 0, -5) . ".css";
     if (!is_file($less)) return $css;
@@ -544,7 +544,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
     array $fields,
     array $fieldset,
     $placeAfter = null,
-    $placeBefore = null,
+    $placeBefore = null
   ) {
     // If we only want to show a single field we exit early
     // as we dont need the wrapper in that case. If you still want to show the
