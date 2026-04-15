@@ -885,6 +885,24 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
   }
 
   /**
+   * Get field settings that must exist before the first save() call.
+   */
+  private function getCreateTimeFieldData(array $data): array
+  {
+    $initial = [];
+
+    if (array_key_exists('type', $data)) {
+      $initial['type'] = $data['type'];
+    }
+
+    if (array_key_exists('schemaVersion', $data)) {
+      $initial['schemaVersion'] = $data['schemaVersion'];
+    }
+
+    return $initial;
+  }
+
+  /**
    * Create a field of the given type
    *
    * If run multiple times it will only update field data.
@@ -939,6 +957,10 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
       $field->type = $type;
       $field->name = $_name;
       $field->label = $_name; // set label (mandatory since ~3.0.172)
+      foreach ($this->getCreateTimeFieldData($options) as $key => $value) {
+        if ($key === 'type') continue;
+        $field->set($key, $value);
+      }
       $field->save();
 
       // create end field for fieldsets
@@ -3277,7 +3299,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
 
       // if no type is set this means that only field data was set
       // for example to update only label or icon of an existing field
-      if (array_key_exists('type', $data)) $this->createField($name, $data['type']);
+      if (array_key_exists('type', $data)) $this->createField($name, $data);
     }
     foreach ($config->templates as $name => $data) {
       // this check makes it possible to define templates without data
@@ -4334,7 +4356,7 @@ class RockMigrations extends WireData implements Module, ConfigurableModule
           $fieldname = array_key_exists('name', $config)
             ? $config['name']
             : $name;
-          $this->createField($fieldname, $config['type']);
+          $this->createField($fieldname, $config);
           $this->setFieldData($fieldname, ['tags' => $tag]);
           break;
         case 'templates':
